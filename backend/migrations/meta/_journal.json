@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1695146572315,
+      "tag": "0000_motionless_jane_foster",
+      "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1695213969354,
+      "tag": "0001_lying_doorman",
+      "breakpoints": true
+    }
+  ]
+}
