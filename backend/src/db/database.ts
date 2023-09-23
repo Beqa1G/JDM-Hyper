@@ -10,7 +10,7 @@ neonConfig.fetchConnectionCache = true;
  
 const sql = neon(env.DRIZZLE_DATABASE_URL!);
 
-const db = drizzle(sql);
+export const db = drizzle(sql);
 
 export async function migration() {
     logger.info("migration started");
