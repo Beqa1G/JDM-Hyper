@@ -2,6 +2,7 @@ import "dotenv/config";
 import env from "./utils/validatedotenv";
 import express, { NextFunction, Request, Response } from "express";
 import mainRoute from "./routes/main.routes";
+import usersRoute from "./routes/user.routes";
 import logger from "./utils/logger";
 import morgan from "morgan";
 import cors from "cors";
@@ -26,6 +27,8 @@ app.use(
 );
 
 app.use("/", mainRoute);
+
+app.use("/api/users", usersRoute);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "endpoint not found"));
