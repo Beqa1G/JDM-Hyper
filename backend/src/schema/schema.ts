@@ -36,12 +36,12 @@ export const cities = pgTable("cities", {
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: varchar("username", { length: 256 }),
-  email: varchar("email", { length: 256 }),
+  username: varchar("username", { length: 256 }).unique(),
+  email: varchar("email", { length: 256 }).unique(),
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),
   password: varchar("password", { length: 256 }),
-  phoneNumber: varchar("phone_number", { length: 15 }),
+  phoneNumber: varchar("phone_number", { length: 15 }).unique(),
   countryId: integer("country_id").references(() => countries.id),
   cityId: integer("city_id").references(() => cities.id),
   dateOfBirth: date("date_of_birth"),
