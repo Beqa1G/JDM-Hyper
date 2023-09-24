@@ -8,6 +8,7 @@ import morgan from "morgan";
 import cors from "cors";
 import createHttpError, { isHttpError } from "http-errors";
 import { migration } from "./db/database";
+import cookieParser from "cookie-parser";
 
 
 const app = express();
@@ -25,6 +26,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use(cookieParser());
 
 app.use("/", mainRoute);
 
