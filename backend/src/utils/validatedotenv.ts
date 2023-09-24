@@ -4,5 +4,6 @@ import { port, str } from "envalid/dist/validators";
 export default cleanEnv(process.env, {
     DRIZZLE_DATABASE_URL: str(),
     PORT: port(),
+    ACCESS_TOKEN_SECRET: str({ desc: "Access token secret" }),
   });
 
