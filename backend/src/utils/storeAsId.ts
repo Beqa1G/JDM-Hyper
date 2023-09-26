@@ -1,10 +1,14 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/database";
+import { cities, countries, gender } from "../schema/schema";
+
+export type ReferenceTable = typeof countries | typeof gender | typeof cities;
+
 
 export async function storeAsId(
   propertyName: string,
   propertyValue: string,
-  referenceTable: any
+  referenceTable: ReferenceTable
 ) {
   const selectedId = await db
     .select({ [propertyName]: referenceTable.id })
@@ -13,5 +17,5 @@ export async function storeAsId(
 
   const id = selectedId[0][propertyName];
 
-  return id
+  return id;
 }

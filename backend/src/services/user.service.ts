@@ -14,6 +14,7 @@ export async function registerUser(newUser: NewUser) {
     cityId: users.cityId,
     dateOfBirth: users.dateOfBirth,
     genderId: users.genderId,
+    role: users.role
   });
 
   if (result.length > 0) {
