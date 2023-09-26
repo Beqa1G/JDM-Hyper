@@ -1,7 +1,6 @@
 import {
   date,
   integer,
-  pgEnum,
   pgTable,
   serial,
   uniqueIndex,
@@ -34,6 +33,11 @@ export const cities = pgTable("cities", {
   countryId: integer("country_id").references(() => countries.id),
 });
 
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 50 }).unique(),
+});
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 256 }).unique(),
@@ -46,6 +50,7 @@ export const users = pgTable("users", {
   cityId: integer("city_id").references(() => cities.id),
   dateOfBirth: date("date_of_birth"),
   genderId: integer("gender_id").references(() => gender.id),
+  role: varchar("role", {length: 50}).references(() => roles.name).default("User")
 });
 
 export type User = typeof users.$inferSelect;

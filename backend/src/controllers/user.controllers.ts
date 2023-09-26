@@ -3,13 +3,15 @@ import { registerUser } from "../services/user.service";
 import { db } from "../db/database";
 import logger from "../utils/logger";
 import bcrypt from "bcrypt";
-import { User, cities, countries, gender, users } from "../schema/schema";
+import { cities, countries, gender, users } from "../schema/schema";
 import createHttpError from "http-errors";
 import { eq } from "drizzle-orm";
 import { omit } from "lodash";
 import jwt from "jsonwebtoken";
 import env from "../utils/validatedotenv";
 import { updateAndStoreAsId, updatePassword, updateUserProperty } from "../utils/updateUserFunc";
+import { storeAsId } from "../utils/storeAsId";
+import { isValidEmail } from "../utils/isValidEmail";
 
 export interface RegisterBody {
   id: number;
@@ -24,6 +26,7 @@ export interface RegisterBody {
   city: string;
   dateOfBirth: string;
   genderType: string;
+  role: string;
 }
 
 export async function RegisterUserHandler(
@@ -43,6 +46,7 @@ export async function RegisterUserHandler(
     city,
     dateOfBirth,
     genderType,
+    role
   } = req.body;
 
   try {
@@ -70,6 +74,12 @@ export async function RegisterUserHandler(
       throw createHttpError(409, "User with this email already exists");
     }
 
+    const validEmail = isValidEmail(email);
+
+    if(!validEmail) {
+      throw createHttpError(400, 'Invalid email address format');
+    }
+
     const existingPhoneNumberQuery = await db
       .select({ phoneNumber: users.phoneNumber })
       .from(users)
@@ -89,26 +99,28 @@ export async function RegisterUserHandler(
       throw createHttpError(400, "Passwords do not match");
     }
 
-    const SelectedCountryId = await db
+/*     const SelectedCountryId = await db
       .select({ countryId: countries.id })
       .from(countries)
-      .where(eq(countries.name, country));
+      .where(eq(countries.name, country)); */
 
-    const SelectedCityId = await db
+    /* const SelectedCityId = await db
       .select({ cityId: cities.id })
       .from(cities)
-      .where(eq(cities.name, city));
+      .where(eq(cities.name, city)); */
 
-    const SelectedGenderId = await db
+/*     const SelectedGenderId = await db
       .select({ genderId: gender.id })
       .from(gender)
-      .where(eq(gender.name, genderType));
+      .where(eq(gender.name, genderType)); */
 
-    const countryId = SelectedCountryId[0].countryId;
-    const cityId = SelectedCityId[0].cityId;
-    const genderId = SelectedGenderId[0].genderId;
+    const countryId = await storeAsId("countryId", country, countries);
+    const cityId = await storeAsId("cityId", city, cities);
+    const genderId = await storeAsId("genderId", genderType, gender);
 
     const hashPassword = bcrypt.hashSync(password, 10);
+
+    console.log(countryId)
 
     const user = await registerUser({
       username,
@@ -121,6 +133,7 @@ export async function RegisterUserHandler(
       cityId,
       dateOfBirth,
       genderId,
+      role
     });
 
     res.status(200).json(omit(user, "password"));
@@ -141,7 +154,6 @@ export async function LoginUserHandler(
   next: NextFunction
 ) {
   const { username, password } = req.body;
-  const errorCode: number = 401;
 
   try {
     const userQuery = await db
@@ -436,5 +448,37 @@ export async function deleteUser(req: Request, res: Response) {
     return res
       .status(error.status || 500)
       .json({ error: error.message || "Internal server error" });
+  }
+}
+
+export interface RoleAssignBody {
+  id: number
+  username: string
+  role: string
+}
+
+export async function assignModRoleToUser(req:Request<{}, {}, RoleAssignBody>, res:Response, next:NextFunction) {
+
+const {id, role} = req.body
+
+  try {
+    const userQuery = await db.select().from(users).where(eq(users.id, id))
+
+    const user = userQuery[0]
+
+    if(user.role === "Moderator") {
+      createHttpError(400, "Cannot assign same role to a moderator")
+    }
+
+    if(user.role === "User") {
+      await db.update(users).set({role: "Moderator"}).where(eq(users.id, id))
+      user.role = "Moderator";
+    }
+
+    res.status(200).json(user)
+
+  } catch (error) {
+    logger.error(error);
+    next(error);
   }
 }
