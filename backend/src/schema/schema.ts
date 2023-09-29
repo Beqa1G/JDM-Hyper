@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   integer,
   pgTable,
@@ -50,6 +51,7 @@ export const users = pgTable("users", {
   cityId: integer("city_id").references(() => cities.id),
   dateOfBirth: date("date_of_birth"),
   genderId: integer("gender_id").references(() => gender.id),
+  isLoggedIn : boolean("isloggedIn").default(false),
   role: varchar("role", {length: 50}).references(() => roles.name).default("User")
 });
 

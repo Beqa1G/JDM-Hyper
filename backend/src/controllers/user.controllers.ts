@@ -9,7 +9,11 @@ import { eq } from "drizzle-orm";
 import { omit } from "lodash";
 import jwt from "jsonwebtoken";
 import env from "../utils/validatedotenv";
-import { updateAndStoreAsId, updatePassword, updateUserProperty } from "../utils/updateUserFunc";
+import {
+  updateAndStoreAsId,
+  updatePassword,
+  updateUserProperty,
+} from "../utils/updateUserFunc";
 import { storeAsId } from "../utils/storeAsId";
 import { isValidEmail } from "../utils/isValidEmail";
 
@@ -46,7 +50,7 @@ export async function RegisterUserHandler(
     city,
     dateOfBirth,
     genderType,
-    role
+    role,
   } = req.body;
 
   try {
@@ -76,8 +80,8 @@ export async function RegisterUserHandler(
 
     const validEmail = isValidEmail(email);
 
-    if(!validEmail) {
-      throw createHttpError(400, 'Invalid email address format');
+    if (!validEmail) {
+      throw createHttpError(400, "Invalid email address format");
     }
 
     const existingPhoneNumberQuery = await db
@@ -99,7 +103,7 @@ export async function RegisterUserHandler(
       throw createHttpError(400, "Passwords do not match");
     }
 
-/*     const SelectedCountryId = await db
+    /*     const SelectedCountryId = await db
       .select({ countryId: countries.id })
       .from(countries)
       .where(eq(countries.name, country)); */
@@ -109,7 +113,7 @@ export async function RegisterUserHandler(
       .from(cities)
       .where(eq(cities.name, city)); */
 
-/*     const SelectedGenderId = await db
+    /*     const SelectedGenderId = await db
       .select({ genderId: gender.id })
       .from(gender)
       .where(eq(gender.name, genderType)); */
@@ -120,7 +124,7 @@ export async function RegisterUserHandler(
 
     const hashPassword = bcrypt.hashSync(password, 10);
 
-    console.log(countryId)
+    console.log(countryId);
 
     const user = await registerUser({
       username,
@@ -133,7 +137,7 @@ export async function RegisterUserHandler(
       cityId,
       dateOfBirth,
       genderId,
-      role
+      role,
     });
 
     res.status(200).json(omit(user, "password"));
@@ -160,6 +164,7 @@ export async function LoginUserHandler(
       .select({
         id: users.id,
         username: users.username,
+        isLoggedIn: users.isLoggedIn,
         password: users.password,
       })
       .from(users)
@@ -191,6 +196,13 @@ export async function LoginUserHandler(
       sameSite: "strict",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
+
+    await db
+      .update(users)
+      .set({ isLoggedIn: true })
+      .where(eq(users.id, user.id));
+
+    user.isLoggedIn = true;
 
     res.status(200).json(omit(user, "password"));
   } catch (error) {
@@ -370,10 +382,7 @@ export async function updateUser(
       if (req.body.password.length < 6) {
         throw createHttpError(400, "Password needs to be 6 characters long");
       } else {
-        await updatePassword(
-          user.id,
-          req.body.password,
-        );
+        await updatePassword(user.id, req.body.password);
       }
     }
 
@@ -387,12 +396,7 @@ export async function updateUser(
     }
 
     if (req.body.city) {
-      await updateAndStoreAsId(
-        user.id,
-        "cityId",
-        req.body.city,
-        cities
-      )
+      await updateAndStoreAsId(user.id, "cityId", req.body.city, cities);
     }
 
     if (req.body.genderType) {
@@ -401,7 +405,7 @@ export async function updateUser(
         "genderId",
         req.body.genderType,
         gender
-      )
+      );
     }
 
     const updatedUserQuery = await db
@@ -412,7 +416,7 @@ export async function updateUser(
     const updatedUser = updatedUserQuery[0];
 
     console.log("updated user: ", updatedUser);
-    console.log(user.password == updatedUser.password)
+    console.log(user.password == updatedUser.password);
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -448,37 +452,5 @@ export async function deleteUser(req: Request, res: Response) {
     return res
       .status(error.status || 500)
       .json({ error: error.message || "Internal server error" });
-  }
-}
-
-export interface RoleAssignBody {
-  id: number
-  username: string
-  role: string
-}
-
-export async function assignModRoleToUser(req:Request<{}, {}, RoleAssignBody>, res:Response, next:NextFunction) {
-
-const {id, role} = req.body
-
-  try {
-    const userQuery = await db.select().from(users).where(eq(users.id, id))
-
-    const user = userQuery[0]
-
-    if(user.role === "Moderator") {
-      createHttpError(400, "Cannot assign same role to a moderator")
-    }
-
-    if(user.role === "User") {
-      await db.update(users).set({role: "Moderator"}).where(eq(users.id, id))
-      user.role = "Moderator";
-    }
-
-    res.status(200).json(user)
-
-  } catch (error) {
-    logger.error(error);
-    next(error);
   }
 }

@@ -1,0 +1,45 @@
+.container {
+  margin-inline: 2rem;
+  background-color: rgb(56, 55, 55);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoWrapper a {
+  color: whitesmoke;
+}
+
+
+.NavWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container{
+  padding: 1.5rem;
+}
+
+
+.navList {
+  display: flex;
+  gap: 1rem;
+  text-decoration: none;
+  list-style: none;
+}
+
+.navList li a {
+  color: whitesmoke;
+}
+
+
+.activeLink {
+  color: rgba(245, 245, 245, 0.699);
+  text-decoration: underline;
+}
