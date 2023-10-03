@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:1337",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,7 +13,9 @@
     "@tanstack/react-query": "^4.35.3",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-hook-form": "^7.46.2",
+    "zustand": "^4.4.2"
   },
   "devDependencies": {
     "@types/node": "latest",

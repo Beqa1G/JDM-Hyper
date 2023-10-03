@@ -3,7 +3,7 @@ import { registerUser } from "../services/user.service";
 import { db } from "../db/database";
 import logger from "../utils/logger";
 import bcrypt from "bcrypt";
-import { cities, countries, gender, users } from "../schema/schema";
+import { User, cities, countries, gender, users } from "../schema/schema";
 import createHttpError from "http-errors";
 import { eq } from "drizzle-orm";
 import { omit } from "lodash";
@@ -95,12 +95,32 @@ export async function RegisterUserHandler(
       throw createHttpError(409, "Phone Number is taken");
     }
 
+    if (!password) {
+      throw createHttpError(400, "please enter password");
+    }
+
+    if (!confirmPassword) {
+      throw createHttpError(400, "please confirm your password");
+    }
+
     if (password.length < 6) {
       throw createHttpError(400, "Password has to be 6 characters long");
     }
 
     if (password !== confirmPassword) {
       throw createHttpError(400, "Passwords do not match");
+    }
+
+    if (!phoneNumber) {
+      throw createHttpError(400, "Enter your phone number");
+    }
+
+    if (!dateOfBirth) {
+      throw createHttpError(400, "enter your phone number");
+    }
+
+    if (!genderType) {
+      throw createHttpError(400, "please choose gender");
     }
 
     /*     const SelectedCountryId = await db
@@ -117,6 +137,14 @@ export async function RegisterUserHandler(
       .select({ genderId: gender.id })
       .from(gender)
       .where(eq(gender.name, genderType)); */
+
+    if (!country || country === "Select Country") {
+      throw createHttpError(400, "Please Select country");
+    }
+
+    if (!city || city === "Select City") {
+      throw createHttpError(400, "Please Select city");
+    }
 
     const countryId = await storeAsId("countryId", country, countries);
     const cityId = await storeAsId("cityId", city, cities);
@@ -452,5 +480,97 @@ export async function deleteUser(req: Request, res: Response) {
     return res
       .status(error.status || 500)
       .json({ error: error.message || "Internal server error" });
+  }
+}
+
+interface UsernameBody {
+  username: string;
+}
+
+interface EmailBody {
+  email: string;
+}
+
+export async function checkUsernameAvailability(
+  req: Request<{}, {}, UsernameBody>,
+  res: Response,
+  next: NextFunction
+) {
+  const { username } = req.body;
+
+  try {
+    const existingUserNameQuery = await db
+      .select({ username: users.username })
+      .from(users)
+      .where(eq(users.username, username));
+
+    const existingUserName = existingUserNameQuery[0];
+
+    if (existingUserName) {
+      res.json({ taken: true });
+    } else {
+      res.json({ taken: false });
+    }
+  } catch (error) {
+    logger.error(error);
+    next(error);
+  }
+}
+
+export async function checkEmailAvailability(
+  req: Request<{}, {}, EmailBody>,
+  res: Response,
+  next: NextFunction
+) {
+  const { email } = req.body;
+
+  console.log(req.body);
+
+  try {
+    const existingEmailQuery = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.email, email));
+
+    const existingEmail = existingEmailQuery[0];
+
+    if (existingEmail) {
+      res.json({ taken: true });
+    } else {
+      res.json({ taken: false });
+    }
+  } catch (error) {
+    logger.error(error);
+    next(error);
+  }
+}
+
+interface PNBody {
+  phoneNumber: string;
+}
+
+export async function checkphoneNumberAvailability(
+  req: Request<{}, {}, PNBody>,
+  res: Response,
+  next: NextFunction
+) {
+  const { phoneNumber } = req.body;
+
+  try {
+    const existingPhoneNumberQuery = await db
+      .select({ phoneNumber: users.phoneNumber })
+      .from(users)
+      .where(eq(users.phoneNumber, phoneNumber));
+
+    const existingPhoneNumber = existingPhoneNumberQuery[0];
+
+    if (existingPhoneNumber) {
+      res.json({ taken: true });
+    } else {
+      res.json({ taken: false });
+    }
+  } catch (error) {
+    logger.error(error);
+    next(error);
   }
 }

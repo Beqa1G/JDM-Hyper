@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 export function NavBar() {
   const pathaname = usePathname();
 
-  function isActive(href: string) {
+ function isActive(href: string) {
     return pathaname === href;
   }
 

@@ -1,8 +1,5 @@
 .container {
-  margin-inline: 2rem;
-  background-color: rgb(56, 55, 55);
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  background-color: rgb(32, 30, 30);
 }
 
 .logoWrapper {
@@ -40,6 +37,6 @@
 
 
 .activeLink {
-  color: rgba(245, 245, 245, 0.699);
-  text-decoration: underline;
+  opacity: 0.8;
 }
+

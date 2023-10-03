@@ -1,3 +1,4 @@
+import { cityByCountryName } from "../models/citybycountryname";
 import { Country } from "../models/country";
 
 export async function fetchData(input: RequestInfo, init?: RequestInit) {
@@ -12,6 +13,24 @@ export async function fetchData(input: RequestInfo, init?: RequestInit) {
 }
 
 export async function fetchCountries(): Promise<Country[]> {
-  const response = await fetchData("/countries", { method: "GET" });
+  const response = await fetchData("http://localhost:1337/countries", { method: "GET" });
   return await response.json();
+}
+
+
+
+export async function fetchCitiesByCountryName(countryName: string): Promise<cityByCountryName[]> {
+  const response = await fetch("http://localhost:1337/citiesbycountry", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ country: countryName }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching cities");
+  }
+
+  return response.json();
 }
