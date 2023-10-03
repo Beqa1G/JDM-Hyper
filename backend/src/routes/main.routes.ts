@@ -1,5 +1,5 @@
 import express from "express";
-import { getCountries } from "../controllers/country-city.controllers";
+import { getCitiesByCountryName, getCountries } from "../controllers/country-city.controllers";
 
 const router = express.Router();
 
@@ -8,5 +8,7 @@ router.get("/", (req, res) => {
 });
 
 
-router.get("/countries", getCountries)
+router.get("/countries", getCountries);
+
+router.post("/citiesbycountry", getCitiesByCountryName);
 export default router
