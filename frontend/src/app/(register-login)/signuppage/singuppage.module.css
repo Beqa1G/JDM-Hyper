@@ -1,0 +1,156 @@
+.mainFlex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 4rem;
+  flex-grow: 4;
+  margin-top: 4rem;
+}
+
+.marginBottomS {
+  margin-bottom: 1rem;
+}
+
+.marginTopS {
+  margin-top: 1rem;
+}
+.marginTopXS {
+  margin-top: 0.5rem;
+}
+
+.flex {
+  display: flex;
+  flex-grow: 1;
+  gap: 0.5rem;
+}
+
+.flexNoGap {
+  display: flex;
+}
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.birthdayText {
+  color: #8e8e8e;
+}
+
+.NavWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  margin-inline: 5rem;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoWrapper a {
+  color: black;
+}
+
+.listitem {
+  text-decoration: none;
+  list-style: none;
+}
+
+.nodec {
+
+  background-color: rgb(6, 6, 255); 
+  border: 1px solid blue;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  border-radius: 10px;
+  color: white;
+}
+
+.nodec:hover {
+  background-color: rgb(1, 1, 168);
+}
+
+
+
+.mainFlex input {
+  color: #8e8e8e!important;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.mainFlex select {
+  width: 300px !important;
+  color: #8e8e8e;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.mainFlex legend {
+  color: #8e8e8e;
+}
+.mainFlex label {
+  color: #8e8e8e;
+}
+
+.mainFlex option {
+  width: 300px !important;
+}
+
+.flexCol,
+#birthday {
+  width: 50%;
+}
+
+.center {
+  width: 50%;
+}
+
+/* CSS */
+.button3 {
+  background-color: rgb(6, 6, 255); /* Green */
+  border: 1px solid blue;
+  border-radius: 15px;
+  color: white;
+  margin-top: 0.5rem;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  display: block;
+}
+
+.button3:hover {
+  background-color: rgb(1, 1, 168);
+}
+
+ .flexNoGap, #female, #male {
+  width: 35%;
+}
+
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 12px; 
+}
+
