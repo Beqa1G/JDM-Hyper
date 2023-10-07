@@ -57,6 +57,13 @@
       "when": 1695741858435,
       "tag": "0008_abandoned_alice",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1696612475460,
+      "tag": "0009_fine_cable",
+      "breakpoints": true
     }
   ]
 }

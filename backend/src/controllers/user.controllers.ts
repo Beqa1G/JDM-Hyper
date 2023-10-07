@@ -16,6 +16,7 @@ import {
 } from "../utils/updateUserFunc";
 import { storeAsId } from "../utils/storeAsId";
 import { isValidEmail } from "../utils/isValidEmail";
+import { Cookie } from "../middlewares/authMiddleware";
 
 export interface RegisterBody {
   id: number;
@@ -189,23 +190,18 @@ export async function LoginUserHandler(
 
   try {
     const userQuery = await db
-      .select({
-        id: users.id,
-        username: users.username,
-        isLoggedIn: users.isLoggedIn,
-        password: users.password,
-      })
+      .select()
       .from(users)
       .where(eq(users.username, username));
 
     const user = userQuery[0];
 
-    if (!user) {
-      throw createHttpError(404, "User not found");
-    }
+    const jwtObject = { username: user.username, role: user.role };
 
-    if (!user.username) {
-      throw createHttpError(401, "Invalid Credentials");
+    console.log(typeof user);
+
+    if (!user) {
+      throw createHttpError(404, "Invalid Credentials");
     }
 
     const isValid = await bcrypt.compare(password, user.password as string);
@@ -214,29 +210,40 @@ export async function LoginUserHandler(
       throw createHttpError(401, "Invalid Credentials");
     }
 
-    const token = jwt.sign({ id: user.id }, env.ACCESS_TOKEN_SECRET, {
+    const token = jwt.sign(jwtObject, env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "30s",
+    });
+
+    const refreshToken = jwt.sign(jwtObject, env.REFRESH_TOKEN_SECRET, {
       expiresIn: "1d",
     });
 
-    res.cookie("jwt", token, {
+    console.log(token);
+    console.log(refreshToken);
+
+    res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      secure: false,
       sameSite: "strict",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
+    user.isLoggedIn = true;
+    user.refreshToken = refreshToken;
+
     await db
       .update(users)
-      .set({ isLoggedIn: true })
+      .set({ isLoggedIn: true, refreshToken: refreshToken })
       .where(eq(users.id, user.id));
 
-    user.isLoggedIn = true;
-
-    res.status(200).json(omit(user, "password"));
+    res.status(200).json({ token });
   } catch (error) {
     logger.error(error);
     next(error);
   }
+}
+
+export async function HandleRefreshToken(req:Request, res:Response, next: NextFunction) {
+  const cookes: Cookie = req.cookies
 }
 
 export async function logout(req: Request, res: Response) {

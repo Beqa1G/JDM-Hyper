@@ -1,0 +1,62 @@
+.mainFlex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9rem;
+  margin-top: 7rem;
+}
+
+.flexGrow {
+    flex-grow: 1;
+}
+
+
+.flexGrow form  {
+    width: 70%;
+    margin-inline: auto;
+}
+
+.mAuto {
+    margin-left: 5.5rem;
+}
+
+.flexCol {
+  margin-top: 1.5rem;
+}
+
+
+
+.button3 {
+  background-color: rgb(6, 6, 255); /* Green */
+  border: 1px solid blue;
+  border-radius: 15px;
+  color: white;
+  margin-top: 0.5rem;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  display: block;
+}
+
+.button3:hover {
+  background-color: rgb(1, 1, 168);
+}
+
+.mainFlex input {
+  color: #8e8e8e !important;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 10px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 12px;
+}

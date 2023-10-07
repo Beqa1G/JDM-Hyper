@@ -52,7 +52,8 @@ export const users = pgTable("users", {
   dateOfBirth: date("date_of_birth"),
   genderId: integer("gender_id").references(() => gender.id),
   isLoggedIn : boolean("isloggedIn").default(false),
-  role: varchar("role", {length: 50}).references(() => roles.name).default("User")
+  role: varchar("role", {length: 50}).references(() => roles.name).default("User"),
+  refreshToken: varchar("refresh_token", { length: 512 }),
 });
 
 export type User = typeof users.$inferSelect;

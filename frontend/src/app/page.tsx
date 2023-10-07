@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { NavBar } from "./NavBar";
+import { NavBar } from "./(MainNavBar)/NavBar";
 
 export default function Home() {
+  
+
   return (
     <>
       <NavBar />

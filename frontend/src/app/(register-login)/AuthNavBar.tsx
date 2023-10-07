@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./singuppage.module.css";
-import { usePathname} from "next/navigation";
+import styles from "./signuppage/singuppage.module.css";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 
-export function SignUpPageNavBar() {
+export function AuthNavBar() {
   const pathname = usePathname();
 
 
@@ -24,10 +25,11 @@ export function SignUpPageNavBar() {
           </Link>
         </div>
         <nav>
-          <ul >
-            <li className={styles.listitem}  >
-            <Link className={styles.nodec} href={linkHref}>{linkText}</Link>
-             
+          <ul>
+            <li className={styles.listitem}>
+              <Link className={styles.nodec} href={linkHref}>
+                {linkText}
+              </Link>
             </li>
           </ul>
         </nav>

@@ -143,12 +143,6 @@
 }
 
 
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .errorMessage {
   color: red;
   font-size: 12px; 

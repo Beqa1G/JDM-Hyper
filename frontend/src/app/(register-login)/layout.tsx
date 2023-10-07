@@ -1,20 +1,23 @@
+
+
 import type { Metadata } from "next";
-import { SignUpPageNavBar } from "./signuppage/SignupPageNavBar";
 
 
-export const metadata: Metadata = {
-  title: "Registration page",
-  description: "Buy cars and parts from JDM Hyper",
-};
+import { getLoggedInUser } from "../network/users.api";
+import { UserContext, UserContextType } from "../useUser";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+
+
+
   return (
     <>
-      <SignUpPageNavBar />
+      
       <main>{children}</main>
     </>
   );

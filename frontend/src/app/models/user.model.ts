@@ -8,4 +8,5 @@ export interface User {
     city: string;
     dateOfBirth: string;
     genderType: string;
+    isLoggedIn: boolean;
 }
