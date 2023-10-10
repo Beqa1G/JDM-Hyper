@@ -15,14 +15,11 @@ import {
   register,
   signUpCredentials,
 } from "../../network/users.api";
-import { redirect, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import { AuthNavBar } from "../AuthNavBar";
-import { UserContext, UserContextType } from "@/app/useUser";
 
 export default function SignupPage() {
   const router = useRouter();
-
-  const { user, isLoading } = useContext<UserContextType>(UserContext);
 
   const [selectedCountry, setSelectedCountry] = useState("Select Country");
   const [selectedGender, setSelectedGender] = useState("");
@@ -55,10 +52,6 @@ export default function SignupPage() {
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<signUpCredentials>();
-
-  if (user) {
-    redirect("/");
-  }
 
   const signUpMutation = useMutation(register);
 
@@ -146,307 +139,266 @@ export default function SignupPage() {
 
   return (
     <>
-      {isLoading ? (
-        <div>...loading</div>
-      ) : (
-        <>
-          <AuthNavBar />
-          <div className={styles.mainFlex}>
-            <div>
-              <h2 className={styles.marginBottomS}>Register Your Account</h2>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className={styles.flex}>
-                  <Controller
-                    name="username"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Username is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input type="text" placeholder="Username" {...field} />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
+      <AuthNavBar />
+      <div className={styles.mainFlex}>
+        <div>
+          <h2 className={styles.marginBottomS}>Register Your Account</h2>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.flex}>
+              <Controller
+                name="username"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Username is required" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input type="text" placeholder="Username" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
                     )}
-                  />
-
-                  <Controller
-                    name="email"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Email is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input type="email" placeholder="Email" {...field} />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className={styles.flex}>
-                  <Controller
-                    name="firstName"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "First name is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input
-                          placeholder="First name"
-                          type="text"
-                          {...field}
-                        />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-
-                  <Controller
-                    name="lastName"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Last name is required", minLength: 6 }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input type="text" placeholder="Last name" {...field} />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className={styles.flex}>
-                  <Controller
-                    name="password"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Password is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input
-                          type="password"
-                          placeholder="password"
-                          {...field}
-                        />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-
-                  <Controller
-                    name="confirmPassword"
-                    defaultValue=""
-                    control={control}
-                    rules={{
-                      required: "Please confirm your password",
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div className={styles.flexCol}>
-                        <input
-                          type="password"
-                          placeholder="Confirm password"
-                          {...field}
-                        />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className={styles.center}>
-                  <Controller
-                    name="phoneNumber"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Phone number is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div>
-                        <input
-                          type="tel"
-                          placeholder="Phone number"
-                          {...field}
-                        />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className={styles.flex}>
-                  <div>
-                    <Controller
-                      name="country"
-                      defaultValue={selectedCountry}
-                      control={control}
-                      rules={{
-                        validate: (value) =>
-                          value !== "Select Country" ||
-                          "Please select a country",
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <div className={styles.flexCol}>
-                          <select
-                            id="country"
-                            onChange={(e) => {
-                              field.onChange(e);
-                              handleChange(e);
-                            }}
-                            value={selectedCountry}
-                          >
-                            <option value="Select Country">
-                              Select Country
-                            </option>
-                            {countries?.map((country) => (
-                              <option key={country.id}>{country.name}</option>
-                            ))}
-                          </select>
-                          {error && (
-                            <div className={styles.errorMessage}>
-                              {error.message}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    />
                   </div>
+                )}
+              />
 
-                  <div>
-                    <Controller
-                      name="city"
-                      control={control}
-                      rules={{ required: "Please Select a city" }}
-                      render={({ field, fieldState: { error } }) => (
-                        <div className={styles.flexCol}>
-                          <select id="cities" {...field}>
-                            <option value="Select city">Select City</option>
-                            {citiesByCountry?.map((city) => (
-                              <option value={city.cityName} key={city.cityId}>
-                                {city.cityName}
-                              </option>
-                            ))}
-                          </select>
-                          {error && (
-                            <div className={styles.errorMessage}>
-                              {error.message}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className={styles.flexCol}>
-                  <Controller
-                    name="dateOfBirth"
-                    defaultValue=""
-                    control={control}
-                    rules={{ required: "Enter your date of birth" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <div>
-                        <input
-                          placeholder="Date of Birth: YYYY-MM-DD"
-                          id="birthday"
-                          {...field}
-                        />
-                        {error && (
-                          <div className={styles.errorMessage}>
-                            {error.message}
-                          </div>
-                        )}
-                      </div>
+              <Controller
+                name="email"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Email is required" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input type="email" placeholder="Email" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
                     )}
-                  />
-                </div>
+                  </div>
+                )}
+              />
+            </div>
 
+            <div className={styles.flex}>
+              <Controller
+                name="firstName"
+                defaultValue=""
+                control={control}
+                rules={{ required: "First name is required" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input placeholder="First name" type="text" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="lastName"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Last name is required", minLength: 6 }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input type="text" placeholder="Last name" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className={styles.flex}>
+              <Controller
+                name="password"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Password is required" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input type="password" placeholder="password" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="confirmPassword"
+                defaultValue=""
+                control={control}
+                rules={{
+                  required: "Please confirm your password",
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className={styles.flexCol}>
+                    <input
+                      type="password"
+                      placeholder="Confirm password"
+                      {...field}
+                    />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className={styles.center}>
+              <Controller
+                name="phoneNumber"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Phone number is required" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div>
+                    <input type="tel" placeholder="Phone number" {...field} />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className={styles.flex}>
+              <div>
                 <Controller
-                  name="genderType"
-                  defaultValue=""
+                  name="country"
+                  defaultValue={selectedCountry}
                   control={control}
-                  rules={{ required: "Gender is required" }}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
-                    <>
-                      <legend className={styles.marginTopXS}>
-                        Choose your gender:
-                      </legend>
-                      <div
-                        className={`${styles.flexNoGap} ${styles.marginTopS}`}
+                  rules={{
+                    validate: (value) =>
+                      value !== "Select Country" || "Please select a country",
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className={styles.flexCol}>
+                      <select
+                        id="country"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleChange(e);
+                        }}
+                        value={selectedCountry}
                       >
-                        <label htmlFor="male">Male</label>
-                        <input
-                          type="radio"
-                          id="male"
-                          name="male"
-                          value="Male"
-                          onChange={(e) => {
-                            onChange(e);
-                            handleGenderSelection(e);
-                          }}
-                          checked={isSelected("Male")}
-                        />
-                        <label htmlFor="female">Female</label>
-                        <input
-                          type="radio"
-                          id="female"
-                          value="Female"
-                          onChange={(e) => {
-                            onChange(e);
-                            handleGenderSelection(e);
-                          }}
-                          checked={isSelected("Female")}
-                        />
-                      </div>
+                        <option value="Select Country">Select Country</option>
+                        {countries?.map((country) => (
+                          <option key={country.id}>{country.name}</option>
+                        ))}
+                      </select>
                       {error && (
                         <div className={styles.errorMessage}>
                           {error.message}
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 />
+              </div>
 
-                <button
-                  className={styles.button3}
-                  role="button"
-                  disabled={isSubmitting}
-                >
-                  Register
-                </button>
-              </form>
+              <div>
+                <Controller
+                  name="city"
+                  control={control}
+                  rules={{ required: "Please Select a city" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className={styles.flexCol}>
+                      <select id="cities" {...field}>
+                        <option value="Select city">Select City</option>
+                        {citiesByCountry?.map((city) => (
+                          <option value={city.cityName} key={city.cityId}>
+                            {city.cityName}
+                          </option>
+                        ))}
+                      </select>
+                      {error && (
+                        <div className={styles.errorMessage}>
+                          {error.message}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
             </div>
-            <div>
-              <Image src="/S13.png" alt="S13 image" width={640} height={350} />
+            <div className={styles.flexCol}>
+              <Controller
+                name="dateOfBirth"
+                defaultValue=""
+                control={control}
+                rules={{ required: "Enter your date of birth" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div>
+                    <input
+                      placeholder="Date of Birth: YYYY-MM-DD"
+                      id="birthday"
+                      {...field}
+                    />
+                    {error && (
+                      <div className={styles.errorMessage}>{error.message}</div>
+                    )}
+                  </div>
+                )}
+              />
             </div>
-          </div>
-        </>
-      )}
+
+            <Controller
+              name="genderType"
+              defaultValue=""
+              control={control}
+              rules={{ required: "Gender is required" }}
+              render={({ field: { onChange }, fieldState: { error } }) => (
+                <>
+                  <legend className={styles.marginTopXS}>
+                    Choose your gender:
+                  </legend>
+                  <div className={`${styles.flexNoGap} ${styles.marginTopS}`}>
+                    <label htmlFor="male">Male</label>
+                    <input
+                      type="radio"
+                      id="male"
+                      name="male"
+                      value="Male"
+                      onChange={(e) => {
+                        onChange(e);
+                        handleGenderSelection(e);
+                      }}
+                      checked={isSelected("Male")}
+                    />
+                    <label htmlFor="female">Female</label>
+                    <input
+                      type="radio"
+                      id="female"
+                      value="Female"
+                      onChange={(e) => {
+                        onChange(e);
+                        handleGenderSelection(e);
+                      }}
+                      checked={isSelected("Female")}
+                    />
+                  </div>
+                  {error && (
+                    <div className={styles.errorMessage}>{error.message}</div>
+                  )}
+                </>
+              )}
+            />
+
+            <button
+              className={styles.button3}
+              role="button"
+              disabled={isSubmitting}
+            >
+              Register
+            </button>
+          </form>
+        </div>
+        <div>
+          <Image src="/S13.png" alt="S13 image" width={640} height={350} />
+        </div>
+      </div>
     </>
   );
 }

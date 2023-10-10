@@ -3,6 +3,8 @@ import { Country } from "../models/country";
 
 export async function fetchData(input: RequestInfo, init?: RequestInit) {
   const response = await fetch(input, init);
+
+
   if (response.ok) {
     return response;
   } else {
@@ -11,6 +13,7 @@ export async function fetchData(input: RequestInfo, init?: RequestInit) {
     throw Error(errorMessage);
   }
 }
+
 
 export async function fetchCountries(): Promise<Country[]> {
   const response = await fetchData("http://localhost:1337/countries", { method: "GET" });

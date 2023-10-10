@@ -4,6 +4,7 @@ import express, { NextFunction, Request, Response } from "express";
 import mainRoute from "./routes/main.routes";
 import usersRoute from "./routes/user.routes";
 import adminsRoute from "./routes/admin.routes"
+import authRoute from "./routes/auth.routes"
 import logger from "./utils/logger";
 import morgan from "morgan";
 import cors from "cors";
@@ -32,6 +33,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", mainRoute);
+
+app.use("/api/auth", authRoute)
 
 app.use("/api/adminpage", adminsRoute)
 

@@ -16,9 +16,15 @@ export async function protectMiddleWare(
   next: NextFunction
 ) {
 
-  const cookie: Cookie = req.cookies 
 
-  const token = cookie.jwt;
+  const authHeader = req.headers.authorization 
+
+  if(!authHeader?.startsWith("Bearer ")) {
+    next(createHttpError(401, "Not Authorized"));
+  }
+
+
+  const token = authHeader?.split(" ")[1];
   
 
   if (token) {
@@ -33,11 +39,10 @@ export async function protectMiddleWare(
       const result = user[0];
       req.user = result;
 
+
       next();
     } catch (error) {
-      next(createHttpError(401, "Not Authorized, invalid token"));
+      next(createHttpError(401, "Forbidden"));
     }
-  } else {
-    next(createHttpError(401, "Unauthorized"));
-  }
+  } 
 }

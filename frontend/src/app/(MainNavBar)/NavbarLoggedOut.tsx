@@ -37,6 +37,7 @@ export default function NavBarLoggedOut({ isActive }: NavBarLoggedOutProps) {
             Login
           </Link>
         </li>
+
       </ul>
     </nav>
   );

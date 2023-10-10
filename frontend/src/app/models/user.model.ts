@@ -9,4 +9,10 @@ export interface User {
     dateOfBirth: string;
     genderType: string;
     isLoggedIn: boolean;
+    role: string;
+}
+
+export interface LoginResponse {
+    accessToken: string;
+    role: string;
 }

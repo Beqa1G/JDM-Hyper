@@ -45,6 +45,14 @@ export default function NavBarLoggedIn({ isActive }: NavBarLoggedInProps) {
         <li>
           <button onClick={handleLogout}>logout</button>
         </li>
+        <li>
+          <Link
+            href={"/users"}
+            className={isActive("/users") ? styles.activeLink : ""}
+          >
+            Users
+          </Link>
+        </li>
       </ul>
     </nav>
   );

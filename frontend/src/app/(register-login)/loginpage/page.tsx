@@ -1,31 +1,22 @@
 "use client";
 
 import { login, loginCredentials } from "@/app/network/users.api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import styles from "./loginpage.module.css";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
-import { User } from "@/app/models/user.model";
+import { useRouter } from "next/navigation";
+import { LoginResponse, User } from "@/app/models/user.model";
 import { useContext, useEffect, useState } from "react";
 import { AuthNavBar } from "../AuthNavBar";
 import { UserContext, UserContextType } from "@/app/useUser";
+import AuthContext from "@/app/context/AuthProvider";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
 
-  const { user, setUser, isLoading} =
-    useContext<UserContextType>(UserContext);
-
-  const [logginIn, setIsloggingIn] = useState(false);
-
-  const loginMutation = useMutation<User, any, loginCredentials>(login, {
-    onSuccess: (data) => {
-      setUser(data);
-    },
-  });
-
-  console.log(loginMutation)
+  const { auth, setAuth } = useAuth();
 
   const {
     control,
@@ -37,32 +28,60 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<loginCredentials>();
 
+  const [logginIn, setIsloggingIn] = useState(false);
+
+  const username = getValues("username");
+  const password = getValues("password");
+
+  const loginMutation = useMutation<LoginResponse, any, loginCredentials>(
+    login,
+    {
+      onSuccess: (data) => {
+        setAuth({ ...data, username, password });
+      },
+      onError: () => {
+        setIsloggingIn(false);
+      },
+    }
+  );
+
   async function onSubmit(credentials: loginCredentials) {
     try {
-      setIsloggingIn(true);
       await loginMutation.mutateAsync(credentials);
-      setIsloggingIn(false);
+      setIsloggingIn(true);
+      clearErrors("password");
+      clearErrors("username");
     } catch (error: any) {
-      console.error(error);
+      console.error(error.message);
+      setIsloggingIn(false);
+      if (error.message === "Invalid Credentials") {
+        setError("password", {
+          message: error.message,
+        });
+      } else if (error.message === "Failed to fetch") {
+        setError("password", {
+          message: "Unknown Error",
+        });
+      }
     }
   }
 
   useEffect(() => {
-    if (user) {
-      router.push("/");
+    console.log(logginIn);
+    if (logginIn) {
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
-  }, [user, router]);
+  }, [logginIn, router]);
 
 
-  if (logginIn) {
-    return <div>redirecting...</div>;
+  if(logginIn) {
+    return <div>Login success, Redirecting...</div>
   }
-
-
 
   return (
     <>
-    
       <AuthNavBar />
       <div className={styles.mainFlex}>
         <div className={styles.flexGrow}>

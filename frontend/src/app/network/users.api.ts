@@ -1,4 +1,4 @@
-import { User } from "../models/user.model";
+import { LoginResponse, User } from "../models/user.model";
 import { fetchData } from "./fetchData";
 
 export async function getLoggedInUser(): Promise<User> {
@@ -40,8 +40,10 @@ export interface loginCredentials {
   password: string;
 }
 
-export async function login(credentials: loginCredentials): Promise<User> {
-  const response = await fetchData("http://localhost:1337/api/users/login", {
+export async function login(
+  credentials: loginCredentials
+): Promise<LoginResponse> {
+  const response = await fetchData("http://localhost:1337/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -49,6 +51,10 @@ export async function login(credentials: loginCredentials): Promise<User> {
     credentials: "include",
     body: JSON.stringify(credentials),
   });
+
+  if (!response.ok) {
+    console.log(response);
+  }
 
   return response.json();
 }
@@ -63,7 +69,6 @@ export async function logout() {
 interface ApiResponse {
   taken: boolean;
 }
-
 
 export type FieldTypes = "email" | "username" | "phoneNumber";
 
@@ -83,4 +88,13 @@ export async function checkFields(
   );
 
   return response.json();
+}
+
+
+export async function getUsers(): Promise<User[]> {
+      const response = await fetchData("http://localhost:1337/api/auth/users", {
+      method: "GET"
+    });
+
+    return response.json()
 }
