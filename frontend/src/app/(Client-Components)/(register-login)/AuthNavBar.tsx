@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./signuppage/singuppage.module.css";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+
 
 
 export function AuthNavBar() {

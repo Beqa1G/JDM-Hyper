@@ -17,6 +17,12 @@ import {
 import { Cookie } from "../middlewares/authMiddleware";
 import { RegisterBody } from "./user.controllers";
 
+export async function getLoggedInUser(req: Request, res: Response) {
+  const user = omit(req.user, ["password", "refreshToken"]);
+
+  res.status(200).json(user);
+}
+
 export interface LoginBody {
   username: string;
   password: string;
@@ -39,6 +45,7 @@ export async function LoginUserHandler(
 
     const user = userQuery[0];
 
+
     if (!user) {
       throw createHttpError(401, "Invalid Credentials");
     }
@@ -49,7 +56,7 @@ export async function LoginUserHandler(
       throw createHttpError(401, "Invalid Credentials");
     }
 
-    const jwtObject = { username: user.username, role: user.role };
+    const jwtObject = { username: user.username };
 
     const accessToken = jwt.sign(jwtObject, env.ACCESS_TOKEN_SECRET, {
       expiresIn: "15s",
@@ -68,6 +75,14 @@ export async function LoginUserHandler(
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
+    res.cookie("username", user.username, {
+      sameSite: "strict",
+    });
+
+    res.cookie("genderId", user.genderId, {
+      sameSite: "strict",
+    });
+
     user.isLoggedIn = true;
     user.refreshToken = refreshToken;
 
@@ -76,7 +91,9 @@ export async function LoginUserHandler(
       .set({ isLoggedIn: true, refreshToken: refreshToken })
       .where(eq(users.id, user.id));
 
-    res.status(200).json({ accessToken, role: user.role });
+    const sanitizedUser = omit(user, ["password", "refreshToken"]);
+
+    res.status(200).json({ accessToken });
   } catch (error) {
     logger.error(error);
     next(error);
@@ -92,6 +109,10 @@ export async function HandleRefreshToken(
 
   const refreshToken = cookies.jwt;
 
+  if (!refreshToken) {
+    next(createHttpError(401, "Unauthorized, no refresh token"));
+  }
+
   try {
     const decoded = jwt.verify(
       refreshToken,
@@ -105,21 +126,19 @@ export async function HandleRefreshToken(
       .where(eq(users.username, decoded.username));
     const result = user[0];
 
-    if (!result) {
-      next(createHttpError(401, "Unauthorized"));
-    }
-
     const accessToken = jwt.sign(
-      { username: result.username, role: result.role },
+      { username: result.username },
       env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "15m",
+        expiresIn: "15s",
       }
     );
 
+    const sanitizedUser = omit(result, ["password", "refreshToken"]);
+
     res.status(201).json({ accessToken });
   } catch (error) {
-    next(createHttpError(401, "Forbidden"));
+    next(createHttpError(403, "Forbidden"));
   }
 }
 
@@ -131,134 +150,17 @@ export async function logout(req: Request, res: Response) {
     httpOnly: true,
     sameSite: "strict",
   });
+  res.clearCookie("username", {
+    sameSite: "strict",
+  });
+  res.clearCookie("genderId", {
+    sameSite: "strict",
+  });
   res.status(201).json({ message: "User logged out" });
 }
 
-/* export async function updateUser(
-    req: Request<{}, {}, RegisterBody>,
-    res: Response,
-    next: NextFunction
-  ) {
-    const userQuery = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, req.user.id));
-    const user = userQuery[0];
-  
-    console.log("before update: ", user);
-    try {
-      if (!user) {
-        throw createHttpError(404, "User not  found");
-      }
-  
-      if (req.body.username) {
-        await db
-          .update(users)
-          .set({ username: req.body.username })
-          .where(eq(users.id, user.id));
-      }
-  
-      if (req.body.email) {
-        await db
-          .update(users)
-          .set({ email: req.body.email })
-          .where(eq(users.id, user.id));
-      }
-  
-      if (req.body.firstName) {
-        await db
-          .update(users)
-          .set({ firstName: req.body.firstName })
-          .where(eq(users.id, user.id));
-      }
-  
-      if (req.body.lastName) {
-        await db
-          .update(users)
-          .set({ lastName: req.body.lastName })
-          .where(eq(users.id, user.id));
-      }
-  
-      if (req.body.password) {
-        if (req.body.password.length < 6) {
-          throw createHttpError(400, "password needs to be 6 characters long");
-        } else {
-          const hashPassword = bcrypt.hashSync(req.body.password, 10);
-          await db
-            .update(users)
-            .set({ password: hashPassword })
-            .where(eq(users.id, user.id));
-        }
-      }
-  
-      console.log(req.body.password);
-  
-      if (req.body.phoneNumber) {
-        await db
-          .update(users)
-          .set({ phoneNumber: req.body.password })
-          .where(eq(users.id, user.id));
-      }
-  
-      if (req.body.dateOfBirth) {
-        await db
-          .update(users)
-          .set({ dateOfBirth: req.body.dateOfBirth })
-          .where(eq(users.id, user.id));
-      }
-  
-      if(req.body.country) {
-        const SelectedCountryId = await db
-        .select({ countryId: countries.id })
-        .from(countries)
-        .where(eq(countries.name, req.body.country));
-  
-        const countryId = SelectedCountryId[0].countryId;
-  
-        await db.update(users).set({ countryId}).where(eq(users.id, user.id));
-      }
-  
-  
-      if(req.body.city) {
-        const SelectedCityId = await db
-        .select({ cityId: cities.id })
-        .from(cities)
-        .where(eq(cities.name, req.body.city));
-  
-        const cityId = SelectedCityId[0].cityId;
-  
-        await db.update(users).set({ cityId}).where(eq(users.id, user.id));
-      }
-  
-      if (req.body.genderType) {
-        const SelectedGenderId = await db
-          .select({ genderId: gender.id })
-          .from(gender)
-          .where(eq(gender.name, req.body.genderType));
-  
-        const genderId = SelectedGenderId[0].genderId;
-  
-        await db.update(users).set({ genderId }).where(eq(users.id, user.id));
-      }
-  
-      const updatedUserQuery = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, user.id));
-  
-      const updatedUser = updatedUserQuery[0];
-  
-      console.log("updated user: ", updatedUser);
-  
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      logger.error(error);
-      next(error);
-    }
-  } */
-
 export async function updateUser(
-  req: Request<{}, {}, RegisterBody>,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
@@ -267,6 +169,9 @@ export async function updateUser(
     .from(users)
     .where(eq(users.id, req.user.id));
   const user = userQuery[0];
+
+
+  console.log(req.body)
 
   console.log("before update: ", user);
 
@@ -355,6 +260,10 @@ export async function deleteUser(req: Request, res: Response) {
 
     res.clearCookie("jwt", {
       httpOnly: true,
+      sameSite: "strict",
+    });
+
+    res.clearCookie("username", {
       sameSite: "strict",
     });
     res.status(200).json({ message: "User deleted successfully" });

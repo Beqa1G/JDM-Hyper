@@ -1,9 +1,10 @@
 import express from "express";
 import { protectMiddleWare } from "../middlewares/authMiddleware";
 import {
-    HandleRefreshToken,
+  HandleRefreshToken,
   LoginUserHandler,
   deleteUser,
+  getLoggedInUser,
   getUsers,
   logout,
   updateUser,
@@ -11,6 +12,7 @@ import {
 
 const router = express.Router();
 
+router.get("/loggedinuser", protectMiddleWare, getLoggedInUser);
 
 router.get("/users", protectMiddleWare, getUsers);
 
@@ -22,6 +24,6 @@ router.delete("/profile", protectMiddleWare, deleteUser);
 
 router.post("/login", LoginUserHandler);
 
-router.post("/logout",  logout);
+router.post("/logout", logout);
 
 export default router;

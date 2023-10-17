@@ -1,17 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { createContext, useEffect, useState } from "react";
 
-interface AuthData {
-  username: string;
-  password: string;
+export interface AuthData {
   accessToken: string;
-  role: string;
 }
 
 const AuthContext = createContext<{
   auth: AuthData | null;
-  setAuth: (authData: AuthData) => void;
+  setAuth: React.Dispatch<React.SetStateAction<AuthData | null>>;
 }>({
   auth: null,
   setAuth: () => null,
@@ -23,8 +21,8 @@ export function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const [auth, setAuth] = useState<AuthData | null>(null);
+ 
 
-  console.log(auth);
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
       {children}

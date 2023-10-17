@@ -1,0 +1,14 @@
+.editable {
+    color: #8e8e8e !important;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .editable:hover {
+    cursor: auto;
+  }

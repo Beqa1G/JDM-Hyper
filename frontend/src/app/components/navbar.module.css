@@ -12,31 +12,45 @@
   color: whitesmoke;
 }
 
-
 .NavWrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.container{
+.container {
   padding: 1.5rem;
 }
-
 
 .navList {
   display: flex;
   gap: 1rem;
   text-decoration: none;
   list-style: none;
+  align-items: center;
 }
 
 .navList li a {
   color: whitesmoke;
 }
 
-
 .activeLink {
   opacity: 0.8;
+}
+
+.navBarLoggedInButton {
+  background: none;
+  color: white;
+  font-family: inherit;
+  border: none;
+  font-size: inherit;
+}
+
+.navBarLoggedInButton:hover{
+  cursor: pointer;
+}
+
+.username {
+  color: white;
 }
 

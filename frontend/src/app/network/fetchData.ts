@@ -10,6 +10,7 @@ export async function fetchData(input: RequestInfo, init?: RequestInit) {
   } else {
     const errorBody = await response.json();
     const errorMessage = errorBody.error;
+    console.log(errorMessage)
     throw Error(errorMessage);
   }
 }

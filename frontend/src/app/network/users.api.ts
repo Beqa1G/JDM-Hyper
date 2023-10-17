@@ -2,7 +2,7 @@ import { LoginResponse, User } from "../models/user.model";
 import { fetchData } from "./fetchData";
 
 export async function getLoggedInUser(): Promise<User> {
-  const response = await fetchData("http://localhost:1337/api/users/profile", {
+  const response = await fetchData("http://localhost:1337/auth/users/loggedinuser", {
     method: "GET",
     credentials: "include",
   });
@@ -60,7 +60,7 @@ export async function login(
 }
 
 export async function logout() {
-  await fetchData("http://localhost:1337/api/users/logout", {
+  await fetchData("http://localhost:1337/api/auth/logout", {
     method: "POST",
     credentials: "include",
   });
@@ -98,3 +98,9 @@ export async function getUsers(): Promise<User[]> {
 
     return response.json()
 }
+
+export interface editUserCredentials {
+  username: string;
+  email: string;
+}
+

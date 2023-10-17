@@ -1,15 +1,12 @@
 import Link from "next/link";
 import styles from "./navbar.module.css";
-import { useContext } from "react";
-import { UserContext, UserContextType } from "../useUser";
+
 
 interface NavBarLoggedOutProps {
   isActive(href: string): boolean;
 }
 
 export default function NavBarLoggedOut({ isActive }: NavBarLoggedOutProps) {
-  const { user, isLoading } = useContext<UserContextType>(UserContext);
-
   return (
     <nav>
       <ul className={styles.navList}>
@@ -37,7 +34,6 @@ export default function NavBarLoggedOut({ isActive }: NavBarLoggedOutProps) {
             Login
           </Link>
         </li>
-
       </ul>
     </nav>
   );

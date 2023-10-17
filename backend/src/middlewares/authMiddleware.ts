@@ -20,7 +20,7 @@ export async function protectMiddleWare(
   const authHeader = req.headers.authorization 
 
   if(!authHeader?.startsWith("Bearer ")) {
-    next(createHttpError(401, "Not Authorized"));
+    next(createHttpError(401, "Not Authorized no AccessToken"));
   }
 
 
@@ -46,3 +46,4 @@ export async function protectMiddleWare(
     }
   } 
 }
+

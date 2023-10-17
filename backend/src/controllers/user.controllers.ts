@@ -116,21 +116,6 @@ export async function RegisterUserHandler(
       throw createHttpError(400, "please choose gender");
     }
 
-    /*     const SelectedCountryId = await db
-      .select({ countryId: countries.id })
-      .from(countries)
-      .where(eq(countries.name, country)); */
-
-    /* const SelectedCityId = await db
-      .select({ cityId: cities.id })
-      .from(cities)
-      .where(eq(cities.name, city)); */
-
-    /*     const SelectedGenderId = await db
-      .select({ genderId: gender.id })
-      .from(gender)
-      .where(eq(gender.name, genderType)); */
-
     if (!country || country === "Select Country") {
       throw createHttpError(400, "Please Select country");
     }

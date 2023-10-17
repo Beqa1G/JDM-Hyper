@@ -29,12 +29,6 @@ export async function updateAndStoreAsId(
   propertyValue: string,
   referenceTable: ReferenceTable
 ) {
-  /*   const selectedId = await db
-    .select({ [propertyName]: referenceTable.id })
-    .from(referenceTable)
-    .where(eq(referenceTable.name, propertyValue));
-
-  const id = selectedId[0][propertyName]; */
 
   const id = await storeAsId(propertyName, propertyValue, referenceTable);
 

@@ -118,9 +118,9 @@
   width: 50%;
 }
 
-/* CSS */
+
 .button3 {
-  background-color: rgb(6, 6, 255); /* Green */
+  background-color: rgb(6, 6, 255); 
   border: 1px solid blue;
   border-radius: 15px;
   color: white;

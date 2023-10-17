@@ -2,9 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Providers from "./provider";
-import { UserProvider } from "./useUser";
 import { AuthContextProvider } from "./context/AuthProvider";
-import { RequiresAuth } from "./requiresAuth";
+import PersistLogin from "./(Client-Components)/PersistLogin";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +21,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <AuthContextProvider>
-            <RequiresAuth>
+          <AuthContextProvider> 
               <main>{children}</main>
-            </RequiresAuth>
           </AuthContextProvider>
         </Providers>
       </body>

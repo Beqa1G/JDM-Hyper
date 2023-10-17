@@ -4,8 +4,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   fetchCitiesByCountryName,
   fetchCountries,
-} from "../../network/fetchData";
-import React, { useContext, useEffect, useState } from "react";
+} from "../../../network/fetchData";
+import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./singuppage.module.css";
 import { Controller, useForm } from "react-hook-form";
@@ -14,8 +14,8 @@ import {
   checkFields,
   register,
   signUpCredentials,
-} from "../../network/users.api";
-import {  useRouter } from "next/navigation";
+} from "../../../network/users.api";
+import { useRouter } from "next/navigation";
 import { AuthNavBar } from "../AuthNavBar";
 
 export default function SignupPage() {
